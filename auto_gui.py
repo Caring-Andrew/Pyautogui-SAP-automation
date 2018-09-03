@@ -7,7 +7,7 @@ import datetime
 import shutil
 import os
 
-
+#todo move exploded bom to material folder NOT desktop
 def mbom(material):
     pyautogui.PAUSE = 0.5
     handle = WindowEnumerate('SAP Easy Access')
@@ -80,6 +80,7 @@ def plot_struc(material):
                 break
         if out:
             break
+        time.sleep(0.5)
     time.sleep(1)
     if not pyautogui.confirm('Continue to DocStructure?') == 'OK':
         exit()
@@ -94,7 +95,8 @@ def plot_struc(material):
         mtime = os.path.getmtime('C:\\Temp\\' + i)
         current_time = time.time()
         if (current_time - mtime) < 120: #check if file was created in last 2 mins
-            modified_list.append(i)
+            if "tmp" not in i:
+                modified_list.append(i)
     #find name of file
     try:
         folder_name = modified_list[1].split('.')[0]
@@ -125,6 +127,7 @@ def plot_struc(material):
                 break
         if out:
             break
+        time.sleep(0.5)
     time.sleep(1)
     modified_list = []
     for i in os.listdir('C:\\Temp'):
@@ -142,11 +145,25 @@ def plot_struc(material):
     print(handle)
     win32gui.ShowWindow(handle, win32con.SW_MAXIMIZE)
     win32gui.SetForegroundWindow(handle)
-    pyautogui.hotkey('right')
+    pyautogui.moveTo(360,206)
+    pyautogui.click()
+    time.sleep(1)
+    pyautogui.hotkey('down')
     pyautogui.hotkey('enter')
-    pyautogui.hotkey('alt','f4')
-    pyautogui.hotkey('f3')
-    
+    pyautogui.hotkey('enter')
+    waitforwindow('Save As')
+    pyautogui.typewrite(str(material) + '.MHTML')
+    while True:
+        out = False
+        for i in os.listdir('C:\\Users\\atai\\Documents\\SAP\\SAP GUI'):
+            if str(material) in i:
+                out = True
+                break
+        time.sleep(0.5)
+        if out:
+            break
+    shutil.move('C:\\Users\\atai\\Documents\\SAP\\SAP GUI\\' + str(material) + '.MHTML', folder_dir)
+        
         
     
         
